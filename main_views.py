@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort, request, url_for, jsonify
+from flask import Blueprint, render_template, request, url_for, jsonify
 from config import get_db
 
 main_blueprint = Blueprint('main', __name__)
@@ -46,4 +46,9 @@ def method_not_allowed(e):
         error_info='不允许的请求方法'
     )
     return response, status_code
+
+
+@main_blueprint.route('/')
+def index():
+    return render_template('index.html')
 
