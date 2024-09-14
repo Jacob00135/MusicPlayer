@@ -15,6 +15,9 @@ class Config(object):
     # 数据库配置
     DATABASE_PATH = os.path.join(database_path, 'db.sqlite')
 
+    # 可以访问的文件的根目录
+    PATH_PREFIX = '/data/data/com.termux/files/home/storage/shared/'
+
 
 def init_database():
     """

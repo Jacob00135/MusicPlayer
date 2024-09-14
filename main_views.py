@@ -1,5 +1,9 @@
-from flask import Blueprint, render_template, request, url_for, jsonify
-from config import get_db
+import os
+from flask import (
+    Blueprint, render_template, request, url_for, jsonify,
+    send_from_directory, current_app
+)
+from config import get_db, Config
 
 main_blueprint = Blueprint('main', __name__)
 
@@ -52,3 +56,12 @@ def method_not_allowed(e):
 def index():
     return render_template('index.html')
 
+
+@main_blueprint.route('/storage/<path:filepath>')
+def get_storage_file(filepath):
+    filepath = os.path.realpath(os.path.join(Config.PATH_PREFIX, filepath))
+    directory_path, filename = os.path.split(filepath)
+    print(filepath)
+    print(directory_path)
+    print(filename)
+    return send_from_directory(directory_path, filename, as_attachment=False)

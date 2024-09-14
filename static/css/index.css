@@ -1,1 +1,130 @@
+/* region global */
+html {
+    width: 100%;
+    height: 100%;
+}
 
+body {
+    width: 100%;
+    height: 100%;
+}
+/* endregion */
+
+/* region #main */
+#main {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+}
+/* endregion */
+
+/* region #main .filename */
+#main .filename {
+    overflow: hidden;
+    color: #ebeae7;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 16px;
+}
+/* endregion */
+
+/* region #main .progress-bar */
+#main .progress-bar {
+    position: relative;
+    height: 40px;
+    margin-top: 20px;
+    color: #ebeae7;
+    text-align: center;
+}
+
+#main .progress-bar .background {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    border-radius: 4px;
+    background-color: #dddada;
+    cursor: pointer;
+}
+
+#main .progress-bar .color {
+    position: absolute;
+    top: 8px;
+    left: 0;
+    width: 0;
+    height: 4px;
+    box-shadow: 0 0 1px 1px #18519b;
+    border-radius: 4px 0 0 4px;
+    background-color: #2f70c4;
+    cursor: pointer;
+}
+
+#main .progress-bar .dot {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    box-shadow: 0 0 2px 1px #5c9bec;
+    border: 3px solid #2f70c4;
+    border-radius: 10px;
+    background-color: #8ab7f0;
+}
+
+#main .progress-bar .current-time {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 20px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+#main .progress-bar .total-time {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 20px;
+    font-size: 14px;
+    line-height: 20px;
+}
+/* endregion */
+
+/* region #main .control */
+#main .control .row {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+#main .control button {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#main .control button:hover {
+    background-color: #6585ae;
+}
+
+#main .control button .icon {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 34px;
+    height: 34px;
+    color: #ebeae7;
+}
+/* endregion */

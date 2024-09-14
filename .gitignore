@@ -2,3 +2,4 @@ __pycache__
 venv
 start.sh
 database
+static/audio
