@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}music player{% endblock title %}
+
+{% block style %}
+    <link rel="stylesheet" href="/static/css/player.css"/>
+{% endblock style %}
+
+{% block content %}
+    <div class="filename">播放列表无歌曲</div>
+    <div class="progress-bar">
+        <div class="background"></div>
+        <div class="color"></div>
+        <div class="dot"></div>
+        <div class="current-time">00:00</div>
+        <div class="total-time">00:00</div>
+    </div>
+    <div class="control">
+        <div class="row">
+            <button type="button" id="prev-song-btn" title="上一首">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="m19.496 4.136l-12 7a1 1 0 0 0 0 1.728l12 7A1 1 0 0 0 21 19V5a1 1 0 0 0-1.504-.864M4 4a1 1 0 0 1 .993.883L5 5v14a1 1 0 0 1-1.993.117L3 19V5a1 1 0 0 1 1-1"/></svg>
+            </button>
+            <button type="button" id="fast-backward-btn" title="后退">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="m20.341 4.247l-8 7a1 1 0 0 0 0 1.506l8 7c.647.565 1.659.106 1.659-.753V5c0-.86-1.012-1.318-1.659-.753m-11 0l-8 7a1 1 0 0 0 0 1.506l8 7C9.988 20.318 11 19.859 11 19V5c0-.86-1.012-1.318-1.659-.753"/></svg>
+            </button>
+            <button type="button" id="play-btn" data-state="pause" title="播放/暂停">
+                <svg id="icon-play" class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M6 4v16a1 1 0 0 0 1.524.852l13-8a1 1 0 0 0 0-1.704l-13-8A1 1 0 0 0 6 4"/></svg>
+                <svg id="icon-pause" class="icon hidden" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M9 4H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2m8 0h-2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2"/></svg>
+            </button>
+            <button type="button" id="fast-forward-btn" title="前进">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M2 5v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7C3.012 3.682 2 4.141 2 5m11 0v14c0 .86 1.012 1.318 1.659.753l8-7a1 1 0 0 0 0-1.506l-8-7C14.012 3.682 13 4.141 13 5"/></svg>
+            </button>
+            <button type="button" id="next-song-btn" title="下一首">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M3 5v14a1 1 0 0 0 1.504.864l12-7a1 1 0 0 0 0-1.728l-12-7A1 1 0 0 0 3 5m17-1a1 1 0 0 1 .993.883L21 5v14a1 1 0 0 1-1.993.117L19 19V5a1 1 0 0 1 1-1"/></svg>
+            </button>
+        </div>
+        <div class="row">
+            <button type="button" id="open-file" title="导入歌曲">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="m11.247 3.341l-7 8C3.682 11.988 4.141 13 5 13h14c.86 0 1.318-1.012.753-1.659l-7-8a1 1 0 0 0-1.506 0M18 15H6a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2"/></svg>
+            </button>
+            <button type="button" id="save-playlist" title="保存播放列表">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M21 7v12q0 .825-.587 1.413T19 21H5q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h12zm-9 11q1.25 0 2.125-.875T15 15t-.875-2.125T12 12t-2.125.875T9 15t.875 2.125T12 18m-6-8h9V6H6z"/></svg>
+            </button>
+            <button type="button" id="all-playlist" title="所有播放列表">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><g fill="none" stroke="#ebeae7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" color="#ebeae7"><path d="M3 15c0-2.809 0-4.213.674-5.222a4 4 0 0 1 1.104-1.104C5.787 8 7.19 8 10 8h4c2.809 0 4.213 0 5.222.674a4 4 0 0 1 1.104 1.104C21 10.787 21 12.19 21 15s0 4.213-.674 5.222a4 4 0 0 1-1.104 1.104C18.213 22 16.81 22 14 22h-4c-2.809 0-4.213 0-5.222-.674a4 4 0 0 1-1.104-1.104C3 19.213 3 17.81 3 15"/><path d="M12.5 16.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0m0 0v-5s.4 1.733 2 2M19 8c-.018-1.24-.11-1.943-.582-2.414C17.832 5 16.888 5 15.002 5H8.998c-1.887 0-2.83 0-3.416.586C5.11 6.057 5.018 6.76 5 8m12-3c0-.932 0-1.398-.152-1.765a2 2 0 0 0-1.083-1.083C15.398 2 14.932 2 14 2h-4c-.932 0-1.398 0-1.765.152a2 2 0 0 0-1.083 1.083C7 3.602 7 4.068 7 5"/></g></svg>
+            </button>
+            <button type="button" id="play-mode" title="顺序播放" data-mode="sequential">
+                <svg class="icon" data-title="顺序播放" data-mode="sequential" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="none" stroke="#ebeae7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M22 17.5L18.5 20v-5zM2 5h18M2 11h18M2 17h12"/></svg>
+                <svg class="icon hidden" data-title="列表循环" data-mode="list-loop" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 256 256"><path fill="#ebeae7" d="M24 128a72.08 72.08 0 0 1 72-72h108.69l-10.35-10.34a8 8 0 0 1 11.32-11.32l24 24a8 8 0 0 1 0 11.32l-24 24a8 8 0 0 1-11.32-11.32L204.69 72H96a56.06 56.06 0 0 0-56 56a8 8 0 0 1-16 0m200-8a8 8 0 0 0-8 8a56.06 56.06 0 0 1-56 56H51.31l10.35-10.34a8 8 0 0 0-11.32-11.32l-24 24a8 8 0 0 0 0 11.32l24 24a8 8 0 0 0 11.32-11.32L51.31 200H160a72.08 72.08 0 0 0 72-72a8 8 0 0 0-8-8"/></svg>
+                <svg class="icon hidden" data-title="单曲循环" data-mode="one-loop" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 256 256"><path fill="#ebeae7" d="M24 128a72.08 72.08 0 0 1 72-72h108.69l-10.35-10.34a8 8 0 0 1 11.32-11.32l24 24a8 8 0 0 1 0 11.32l-24 24a8 8 0 0 1-11.32-11.32L204.69 72H96a56.06 56.06 0 0 0-56 56a8 8 0 0 1-16 0m200-8a8 8 0 0 0-8 8a56.06 56.06 0 0 1-56 56H51.31l10.35-10.34a8 8 0 0 0-11.32-11.32l-24 24a8 8 0 0 0 0 11.32l24 24a8 8 0 0 0 11.32-11.32L51.31 200H160a72.08 72.08 0 0 0 72-72a8 8 0 0 0-8-8m-88 40a8 8 0 0 0 8-8v-48a8 8 0 0 0-11.58-7.16l-16 8a8 8 0 1 0 7.16 14.31l4.42-2.21V152a8 8 0 0 0 8 8"/></svg>
+                <svg class="icon hidden" data-title="随机播放" data-mode="random" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="none" stroke="#ebeae7" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 17h2.735a4 4 0 0 0 3.43-1.942l3.67-6.116A4 4 0 0 1 16.265 7H21m0 0l-2-2m2 2l-2 2M3 7h2.735a4 4 0 0 1 2.871 1.215M21 17h-4.735a4 4 0 0 1-2.871-1.215M21 17l-2 2m2-2l-2-2"/></svg>
+            </button>
+            <button type="button" id="current-playlist" title="当前播放列表">
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 256 256"><path fill="#ebeae7" d="M32 64a8 8 0 0 1 8-8h176a8 8 0 0 1 0 16H40a8 8 0 0 1-8-8m8 72h120a8 8 0 0 0 0-16H40a8 8 0 0 0 0 16m72 48H40a8 8 0 0 0 0 16h72a8 8 0 0 0 0-16m135.66-57.7a8 8 0 0 1-10 5.36L208 122.75V192a32.05 32.05 0 1 1-16-27.69V112a8 8 0 0 1 10.3-7.66l40 12a8 8 0 0 1 5.36 9.96M192 192a16 16 0 1 0-16 16a16 16 0 0 0 16-16"/></svg>
+            </button>
+        </div>
+    </div>
+{% endblock content %}
+
+{% block javascript %}
+    <script src="/static/js/player.js"></script>
+{% endblock javascript %}

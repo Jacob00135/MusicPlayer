@@ -13,8 +13,12 @@
 </head>
 <body>
 
-    {% block content %}{% endblock content %}
+    <div id="main" data-storage-route="{{ url_for('main.get_storage_file', filepath='') }}"
+         data-get-current-playlist-route="{{ url_for('main.get_current_playlist') }}">
+        {% block content %}{% endblock content %}
+    </div>
 
+    <script type="text/javascript" src="/static/js/common.js"></script>
     {% block javascript %}{% endblock javascript %}
 </body>
 </html>

@@ -3,157 +3,48 @@
 
     const mainElement = document.getElementById('main');
 
-    mainElement.querySelector('.progress-bar .background').addEventListener('click', locatePlayProgress);
-    mainElement.querySelector('.progress-bar .color').addEventListener('click', locatePlayProgress);
-    document.getElementById('play-btn').addEventListener('click', playButtonClickEvent);
-    document.getElementById('fast-backward-btn').addEventListener('click', fastBackwardButtonClickEvent);
-    document.getElementById('fast-forward-btn').addEventListener('click', fastForwardButtonClickEvent);
-    document.getElementById('play-mode').addEventListener('click', playModeButtonClickEvent);
+    mainElement.querySelector('#open-file input[type="file"]').addEventListener('input', showFileAbspathDialog);
+    mainElement.querySelector('#file-abspath-dialog .close-btn').addEventListener('click', closeFileAbspathDialog);
+    mainElement.querySelector('#file-abspath-dialog form').addEventListener('submit', fileAbspathFormSubmitEvent);
 
-    function generateAudioElement(filepath) {
-        const prefix = mainElement.getAttribute('data-storage-route');
-        const src = prefix + filepath;
-        const fatherBox = document.createElement('div');
-        fatherBox.innerHTML = `<audio>
-            <source type="audio/mpeg" src="${src}"></source>
-        </audio>`;
-
-        return fatherBox.children[0];
+    function showFileAbspathDialog() {
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('file-abspath-dialog').classList.remove('hidden');
     }
 
-    function insertAudioElement(audioElement) {
-        audioElement.addEventListener('timeupdate', audioTimeUpdateEvent);
-        audioElement.addEventListener('ended', audioEndedEvent);
+    function closeFileAbspathDialog() {
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('file-abspath-dialog').classList.add('hidden');
+    }
 
-        const path = audioElement.querySelector('source').getAttribute('src')
-        const filename = path.replace(/\\/g, '/').split('/').pop();
-        mainElement.querySelector('.filename').textContent = filename;
+    function fileAbspathFormSubmitEvent(e) {
+        e.preventDefault();
+        const form = e.target;
 
-        const timer = setInterval(() => {
-            if (!Number.isNaN(audioElement.duration)) {
-                mainElement.querySelector('.progress-bar .total-time').innerHTML = transformTime(audioElement.duration);
-                clearInterval(timer);
+        let fatherDirPath = form.querySelector('input[name="file-abspath"]').value;
+        fatherDirPath = fatherDirPath.replace(/\\/g, '/');
+        if (!fatherDirPath.endsWith('/')) {
+            fatherDirPath = fatherDirPath + '/';
+        }
+        const matchResult = /^\/storage\/emulated\/[0-9]+\//.exec(fatherDirPath);
+        if (matchResult !== null) {
+            fatherDirPath = fatherDirPath.slice(matchResult[0].length);
+        }
+
+        const url = form.getAttribute('action');
+        const files = mainElement.querySelector('#open-file input[type="file"]').files;
+        const data = {'playlist': []};
+        for (let i = 0; i < files.length; i++) {
+            data['playlist'].push(fatherDirPath + files[i].name);
+        }
+
+        ajaxPostJson(url, data, (responseData) => {
+            if (responseData.status === 1) {
+                location.href = form.getAttribute('data-player-route');
+            } else {
+                closeFileAbspathDialog();
+                alert(responseData.message);
             }
-        }, 500);
-
-        mainElement.insertBefore(audioElement, mainElement.children[0]);
-    }
-
-    function transformTime(seconds) {
-        let hour = parseInt(seconds / 3600);
-        let minute = parseInt(seconds % 3600 / 60);
-        let second = parseInt(seconds % 60);
-
-        if (second < 10) {
-            second = '0' + second;
-        }
-        if (minute < 10) {
-            minute = '0' + minute;
-        }
-        if (hour < 1) {
-            return minute + ':' + second;
-        } else if (hour < 10) {
-            return '0' + hour + ':' + minute + ':' + second;
-        } else {
-            return hour + ':' + minute + ':' + second;
-        }
-    }
-
-    function playButtonClickEvent(e) {
-        const playBtn = document.getElementById('play-btn');
-        const audioElement = mainElement.querySelector('audio');
-        const playIcon = document.getElementById('icon-play');
-        const pauseIcon = document.getElementById('icon-pause');
-        if (playBtn.getAttribute('data-state') === 'pause') {
-            audioElement.play();
-            playIcon.classList.add('hidden');
-            pauseIcon.classList.remove('hidden');
-            playBtn.setAttribute('data-state', 'play');
-        } else if (playBtn.getAttribute('data-state') === 'play') {
-            audioElement.pause();
-            pauseIcon.classList.add('hidden');
-            playIcon.classList.remove('hidden');
-            playBtn.setAttribute('data-state', 'pause');
-        }
-    }
-
-    function audioTimeUpdateEvent(e) {
-        const audioElement = e.target;
-        const rate = audioElement.currentTime / audioElement.duration;
-        const percentRate = 100 * rate;
-
-        mainElement.querySelector('.progress-bar .color').style.width = percentRate + '%';
-        mainElement.querySelector('.progress-bar .dot').style.left = percentRate + '%';
-        mainElement.querySelector('.progress-bar .current-time').innerHTML = transformTime(audioElement.currentTime);
-        // mainElement.querySelector('.progress-bar .total-time').innerHTML = transformTime(audioElement.duration);
-    }
-
-    function audioEndedEvent(e) {
-        mainElement.querySelector('.progress-bar .current-time').innerHTML = transformTime(e.target.duration);
-        document.getElementById('icon-pause').classList.add('hidden');
-        document.getElementById('icon-play').classList.remove('hidden');
-        document.getElementById('play-btn').setAttribute('data-state', 'pause');
-    }
-
-    function locatePlayProgress(e) {
-        const audioElement = mainElement.querySelector('audio');
-        const locateLength = e.pageX - (mainElement.offsetLeft + 20);
-        const totalLength = mainElement.querySelector('.progress-bar .background').clientWidth;
-        const rate = locateLength / totalLength;
-        const percentRate = 100 * rate;
-
-        audioElement.currentTime = audioElement.duration * rate;
-        mainElement.querySelector('.progress-bar .color').style.width = percentRate + '%';
-        mainElement.querySelector('.progress-bar .dot').style.left = percentRate + '%';
-        mainElement.querySelector('.progress-bar .current-time').innerHTML = transformTime(audioElement.currentTime);
-
-        const playBtn = document.getElementById('play-btn');
-        if (playBtn.getAttribute('data-state') === 'pause') {
-            playBtn.click();
-        }
-    }
-
-    function fastBackwardButtonClickEvent(e) {
-        const audioElement = mainElement.querySelector('audio');
-        if (audioElement.currentTime >= 5) {
-            audioElement.currentTime = audioElement.currentTime - 5;
-        } else {
-            audioElement.currentTime = 0;
-        }
-
-        const playBtn = document.getElementById('play-btn');
-        if (playBtn.getAttribute('data-state') === 'pause') {
-            playBtn.click();
-        }
-    }
-
-    function fastForwardButtonClickEvent(e) {
-        const audioElement = mainElement.querySelector('audio');
-        if (audioElement.currentTime + 5 > audioElement.duration) {
-            audioElement.currentTime = audioElement.duration;
-        } else {
-            audioElement.currentTime = audioElement.currentTime + 5;
-        }
-
-        const playBtn = document.getElementById('play-btn');
-        if (playBtn.getAttribute('data-state') === 'pause') {
-            playBtn.click();
-        }
-    }
-
-    function playModeButtonClickEvent(e) {
-        const btn = document.getElementById('play-mode');
-        const iconArr = btn.children;
-        const currentPlayMode = btn.getAttribute('data-mode');
-        for (let i = 0; i < iconArr.length; i++) {
-            if (iconArr[i].getAttribute('data-mode') === currentPlayMode) {
-                const newIndex = (i + 1) % iconArr.length;
-                iconArr[i].classList.add('hidden');
-                iconArr[newIndex].classList.remove('hidden');
-                btn.setAttribute('title', iconArr[newIndex].getAttribute('data-title'));
-                btn.setAttribute('data-mode', iconArr[newIndex].getAttribute('data-mode'));
-                break;
-            }
-        }
+        })
     }
 })();

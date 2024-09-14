@@ -16,7 +16,7 @@ class Config(object):
     DATABASE_PATH = os.path.join(database_path, 'db.sqlite')
 
     # 可以访问的文件的根目录
-    PATH_PREFIX = '/data/data/com.termux/files/home/storage/shared/'
+    FLASK_FILE_ROOT_PATH = os.environ.get('FLASK_FILE_ROOT_PATH', '')
 
 
 def init_database():
@@ -46,7 +46,6 @@ def close_db(exception_message=None):
 
     if db is not None:
         db.close()
-
 
 
 def create_app():

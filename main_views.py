@@ -1,7 +1,7 @@
 import os
 from flask import (
     Blueprint, render_template, request, url_for, jsonify,
-    send_from_directory, current_app
+    send_from_directory, current_app, session
 )
 from config import get_db, Config
 
@@ -57,11 +57,26 @@ def index():
     return render_template('index.html')
 
 
+@main_blueprint.route('/player')
+def player():
+    return render_template('player.html')
+
+
+@main_blueprint.route('/open_file', methods=['POST'])
+def open_file():
+    playlist = request.json.get('playlist', [])
+    session['current_playlist'] = playlist
+    return jsonify({'status': 1, 'message': 'success'})
+
+
+@main_blueprint.route('/get_current_playlist')
+def get_current_playlist():
+    current_playlist = session.get('current_playlist', [])
+    return jsonify({'status': 1, 'data': current_playlist})
+
+
 @main_blueprint.route('/storage/<path:filepath>')
 def get_storage_file(filepath):
-    filepath = os.path.realpath(os.path.join(Config.PATH_PREFIX, filepath))
+    filepath = os.path.realpath(os.path.join(Config.FLASK_FILE_ROOT_PATH, filepath))
     directory_path, filename = os.path.split(filepath)
-    print(filepath)
-    print(directory_path)
-    print(filename)
     return send_from_directory(directory_path, filename, as_attachment=False)

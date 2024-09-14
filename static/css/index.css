@@ -1,130 +1,143 @@
-/* region global */
-html {
-    width: 100%;
-    height: 100%;
-}
-
-body {
-    width: 100%;
-    height: 100%;
-}
-/* endregion */
-
-/* region #main */
 #main {
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
+    justify-content: center;
+}
+
+/* region dialog */
+#main #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#main #file-abspath-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+    width: 300px;
+    height: 200px;
+    margin: -100px 0 0 -150px;
+    padding: 0;
+    border-width: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 5px 1px rgba(200, 200, 200, 0.1);
+    background-color: #282c34;
+    outline: none;
+}
+
+#main #file-abspath-dialog form {
+    box-sizing: border-box;
     width: 100%;
     height: 100%;
     padding: 20px;
+    background-color: transparent;
 }
-/* endregion */
 
-/* region #main .filename */
-#main .filename {
-    overflow: hidden;
+#main #file-abspath-dialog form .title {
+    margin: 0;
     color: #ebeae7;
     text-align: center;
-    white-space: nowrap;
-    text-overflow: ellipsis;
     font-size: 16px;
 }
-/* endregion */
 
-/* region #main .progress-bar */
-#main .progress-bar {
-    position: relative;
-    height: 40px;
+#main #file-abspath-dialog form .descr {
+    margin: 12px 0 0 0;
+    font-weight: 400;
+    color: #a8a7a5;
+    font-size: 10px;
+}
+
+#main #file-abspath-dialog form input[name="file-abspath"] {
+    display: block;
+    width: 200px;
+    height: 32px;
+    margin: 20px auto 0;
+    padding: 0 10px;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: #c8c6c4;
+    line-height: 32px;
+    font-size: 14px;
+    outline: none;
+}
+
+#main #file-abspath-dialog form .btn-group {
+    display: flex;
+    justify-content: space-evenly;
     margin-top: 20px;
-    color: #ebeae7;
     text-align: center;
 }
 
-#main .progress-bar .background {
-    position: absolute;
-    top: 8px;
-    left: 0;
-    width: 100%;
-    height: 4px;
+#main #file-abspath-dialog form [type="submit"],
+#main #file-abspath-dialog form .close-btn {
+    margin: 0;
+    padding: 6px 10px;
+    border-width: 0;
     border-radius: 4px;
-    background-color: #dddada;
+    background-color: #235597;
+    color: #ebeae7;
     cursor: pointer;
+    outline: none;
 }
 
-#main .progress-bar .color {
-    position: absolute;
-    top: 8px;
-    left: 0;
-    width: 0;
-    height: 4px;
-    box-shadow: 0 0 1px 1px #18519b;
-    border-radius: 4px 0 0 4px;
-    background-color: #2f70c4;
-    cursor: pointer;
-}
-
-#main .progress-bar .dot {
-    position: absolute;
-    top: 2px;
-    left: 0;
-    width: 10px;
-    height: 10px;
-    box-shadow: 0 0 2px 1px #5c9bec;
-    border: 3px solid #2f70c4;
-    border-radius: 10px;
-    background-color: #8ab7f0;
-}
-
-#main .progress-bar .current-time {
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 20px;
-    font-size: 14px;
-    line-height: 20px;
-}
-
-#main .progress-bar .total-time {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    height: 20px;
-    font-size: 14px;
-    line-height: 20px;
+#main #file-abspath-dialog form [type="submit"]:hover,
+#main #file-abspath-dialog form .close-btn:hover {
+    background-color: #2861ac;
 }
 /* endregion */
 
-/* region #main .control */
-#main .control .row {
+/* region #main button */
+#main > button {
+    box-sizing: border-box;
     display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin-top: 18px;
-}
-
-#main .control button {
+    justify-content: space-between;
+    align-self: center;
     position: relative;
-    width: 50px;
+    overflow: hidden;
     height: 50px;
-    padding: 0;
+    margin: 0 auto;
+    padding: 8px 12px;
     border-width: 0;
     border-radius: 4px;
     background-color: transparent;
     cursor: pointer;
 }
 
-#main .control button:hover {
+#main > button:nth-of-type(n + 2) {
+    margin-top: 20px;
+}
+
+#main > button:hover {
     background-color: #6585ae;
 }
 
-#main .control button .icon {
-    position: absolute;
-    top: 8px;
-    left: 8px;
+#main > button .icon {
     width: 34px;
     height: 34px;
+}
+
+#main > button .text {
+    display: block;
+    height: 100%;
+    margin-left: 10px;
     color: #ebeae7;
+    font-size: 16px;
+    line-height: 34px;
+}
+
+#main #open-file input[type="file"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding-left: 999px;
+    cursor: pointer;
 }
 /* endregion */
