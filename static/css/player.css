@@ -3,6 +3,46 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    position: relative;
+    padding-top: 60px;
+}
+/* endregion */
+
+/* region #main #top-nav */
+#main #top-nav {
+    box-sizing: border-box;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    padding: 0 20px;
+    border-bottom: 1px solid #242424;
+    /*box-shadow: 0 0 6px 2px rgba(0, 0, 0, 0.2);*/
+}
+
+#main #top-nav #index-link {
+    display: block;
+    position: relative;
+    align-self: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#main #top-nav #index-link:hover {
+    background-color: #6585ae;
+}
+
+#main #top-nav #index-link .icon {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 34px;
+    height: 34px;
 }
 /* endregion */
 
