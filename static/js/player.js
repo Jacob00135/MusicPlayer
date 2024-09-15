@@ -14,6 +14,7 @@
     document.getElementById('play-mode').addEventListener('click', playModeButtonClickEvent);
     document.getElementById('prev-song-btn').addEventListener('click', prevSongButtonClickEvent);
     document.getElementById('next-song-btn').addEventListener('click', nextSongButtonClickEvent);
+    document.getElementById('playlist').addEventListener('click', playlistClickEvent);
     loadCurrentPlaylist();
 
     class Playlist {
@@ -30,7 +31,11 @@
         }
 
         getCurrentSong() {
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return {
+                'filepath': this.array[this.randomIndexArray[this.currentIndex]],
+                'sourceIndex': this.randomIndexArray[this.currentIndex],
+                'randomIndex': this.currentIndex
+            };
         }
 
         getPrevSong() {
@@ -74,20 +79,28 @@
 
         #getSequentialModePrevSong() {
             if (this.currentIndex === 0) {
-                return null;
+                return {
+                    'filepath': null,
+                    'sourceIndex': this.randomIndexArray[this.currentIndex],
+                    'randomIndex': this.currentIndex
+                };
             }
 
             this.currentIndex = this.currentIndex - 1;
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return this.getCurrentSong();
         }
 
         #getSequentialModeNextSong() {
             if (this.currentIndex === this.array.length - 1) {
-                return null;
+                return {
+                    'filepath': null,
+                    'sourceIndex': this.randomIndexArray[this.currentIndex],
+                    'randomIndex': this.currentIndex
+                };
             }
 
             this.currentIndex = this.currentIndex + 1;
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return this.getCurrentSong();
         }
 
         #getListloopModePrevSong() {
@@ -97,7 +110,7 @@
                 this.currentIndex = this.currentIndex - 1;
             }
 
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return this.getCurrentSong();
         }
 
         #getListloopModeNextSong() {
@@ -107,7 +120,7 @@
                 this.currentIndex = this.currentIndex + 1;
             }
 
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return this.getCurrentSong();
         }
 
         #getOneLoopModePrevSong() {
@@ -130,7 +143,7 @@
                 this.currentIndex = this.currentIndex + 1;
             }
 
-            return this.array[this.randomIndexArray[this.currentIndex]];
+            return this.getCurrentSong();
         }
     }
 
@@ -145,7 +158,9 @@
             if (responseData.data.length !== 0) {
                 sourcePlayList = responseData.data;
                 playlist = new Playlist(responseData.data, 'sequential');
-                const audioElement = generateAudioElement(playlist.getCurrentSong());
+                const currentSong = playlist.getCurrentSong();
+                const audioElement = generateAudioElement(currentSong.filepath);
+                document.getElementById('playlist').children[currentSong.sourceIndex].classList.add('playing');
                 insertAudioElement(audioElement);
             }
         });
@@ -172,10 +187,22 @@
         const path = audioElement.querySelector('source').getAttribute('src')
         const filename = path.replace(/\\/g, '/').split('/').pop();
         mainElement.querySelector('.filename').textContent = filename;
+        mainElement.querySelector('.filename').title = filename;
+        mainElement.querySelector('.progress-bar .total-time').innerHTML = '00:00';
+        setTimeout(() => {
+            mainElement.querySelector('.progress-bar .current-time').innerHTML = '00:00';
+            mainElement.querySelector('.progress-bar .color').style.width = '0';
+            mainElement.querySelector('.progress-bar .dot').style.left = '0';
+        }, 500);
 
+        const startTime = +new Date();
         const timer = setInterval(() => {
+            console.log('计时器');
             if (!Number.isNaN(audioElement.duration)) {
                 mainElement.querySelector('.progress-bar .total-time').innerHTML = transformTime(audioElement.duration);
+                clearInterval(timer);
+            }
+            if ((+new Date()) - startTime > 3000) {
                 clearInterval(timer);
             }
         }, 500);
@@ -292,7 +319,11 @@
         }
     }
 
-    function switchSong(filepath) {
+    function switchSong(filepath, songIndex) {
+        if (filepath === null) {
+            return undefined;
+        }
+
         mainElement.querySelector('audio').remove();
         const audioElement = generateAudioElement(filepath);
         insertAudioElement(audioElement);
@@ -301,6 +332,10 @@
         document.getElementById('icon-play').classList.add('hidden');
         document.getElementById('icon-pause').classList.remove('hidden');
         document.getElementById('play-btn').setAttribute('data-state', 'play');
+
+        const playlistElement = document.getElementById('playlist');
+        playlistElement.querySelector('.song.playing').classList.remove('playing');
+        playlistElement.children[songIndex].classList.add('playing');
     }
 
     function playModeButtonClickEvent(e) {
@@ -318,8 +353,10 @@
         btn.setAttribute('data-mode', newPlayMode);
 
         if (inArray(oldPlayMode, ['sequential', 'list-loop', 'one-loop']) && newPlayMode === 'random') {
+            const oldSong = playlist.getCurrentSong();
             playlist = new Playlist(sourcePlayList, 'random');
-            switchSong(playlist.getCurrentSong());
+            const songObject = playlist.getCurrentSong();
+            switchSong(songObject.filepath, songObject.sourceIndex);
         } else if (oldPlayMode === 'random' && (newPlayMode === 'sequential' || newPlayMode === 'list-loop')) {
             const randomIndex = playlist.randomIndexArray[playlist.currentIndex];
             playlist = new Playlist(sourcePlayList, newPlayMode);
@@ -332,20 +369,28 @@
     }
 
     function prevSongButtonClickEvent(e) {
-        const filepath = playlist.getPrevSong();
-        if (filepath === null) {
-            return undefined;
-        }
-
-        switchSong(filepath);
+        const songObject = playlist.getPrevSong();
+        switchSong(songObject.filepath, songObject.sourceIndex);
     }
 
     function nextSongButtonClickEvent(e) {
-        const filepath = playlist.getNextSong();
-        if (filepath === null) {
+        const songObject = playlist.getNextSong();
+        switchSong(songObject.filepath, songObject.sourceIndex);
+    }
+
+    function playlistClickEvent(e) {
+        if (!inArray('song', e.target.classList) || inArray('playing', e.target.classList)) {
             return undefined;
         }
 
-        switchSong(filepath);
+        const songElement = e.target;
+        const songIndex = parseInt(songElement.getAttribute('data-index'));
+        for (let i = 0; i < playlist.randomIndexArray.length; i++) {
+            if (playlist.randomIndexArray[i] === songIndex) {
+                playlist.currentIndex = i;
+                break;
+            }
+        }
+        switchSong(sourcePlayList[songIndex], songIndex);
     }
 })();

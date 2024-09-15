@@ -59,7 +59,13 @@ def index():
 
 @main_blueprint.route('/player')
 def player():
-    return render_template('player.html')
+    playlist = session.get('current_playlist', [])
+    filenames = [os.path.basename(fp) for fp in playlist]
+    return render_template(
+        'player.html',
+        playlist=playlist,
+        filenames=filenames
+    )
 
 
 @main_blueprint.route('/open_file', methods=['POST'])
