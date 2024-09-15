@@ -15,6 +15,9 @@
     document.getElementById('prev-song-btn').addEventListener('click', prevSongButtonClickEvent);
     document.getElementById('next-song-btn').addEventListener('click', nextSongButtonClickEvent);
     document.getElementById('playlist').addEventListener('click', playlistClickEvent);
+    document.getElementById('save-playlist').addEventListener('click', showPlaylistNameDialog);
+    mainElement.querySelector('#playlist-name-dialog .close-btn').addEventListener('click', closePlaylistNameDialog);
+    mainElement.querySelector('#playlist-name-dialog form').addEventListener('submit', playlistNameFormSubmitEvent);
     loadCurrentPlaylist();
 
     class Playlist {
@@ -155,14 +158,19 @@
                 return undefined;
             }
 
-            if (responseData.data.length !== 0) {
-                sourcePlayList = responseData.data;
-                playlist = new Playlist(responseData.data, 'sequential');
-                const currentSong = playlist.getCurrentSong();
-                const audioElement = generateAudioElement(currentSong.filepath);
-                document.getElementById('playlist').children[currentSong.sourceIndex].classList.add('playing');
-                insertAudioElement(audioElement);
+            const songCount = responseData.data.length;
+            if (songCount === 0) {
+                return undefined;
             }
+
+            sourcePlayList = responseData.data;
+            playlist = new Playlist(responseData.data, 'sequential');
+            const currentSong = playlist.getCurrentSong();
+            const audioElement = generateAudioElement(currentSong.filepath);
+            document.getElementById('playlist').children[currentSong.sourceIndex].classList.add('playing');
+            insertAudioElement(audioElement);
+
+            mainElement.querySelector('#top-nav .song-count').innerHTML = `共${songCount}首`;
         });
     }
 
@@ -197,7 +205,6 @@
 
         const startTime = +new Date();
         const timer = setInterval(() => {
-            console.log('计时器');
             if (!Number.isNaN(audioElement.duration)) {
                 mainElement.querySelector('.progress-bar .total-time').innerHTML = transformTime(audioElement.duration);
                 clearInterval(timer);
@@ -392,5 +399,26 @@
             }
         }
         switchSong(sourcePlayList[songIndex], songIndex);
+    }
+
+    function showPlaylistNameDialog() {
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('playlist-name-dialog').classList.remove('hidden');
+    }
+
+    function closePlaylistNameDialog() {
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('playlist-name-dialog').classList.add('hidden');
+    }
+
+    function playlistNameFormSubmitEvent(e) {
+        e.preventDefault();
+
+        const playlistName = e.target.querySelector('input[name="playlist-name"]').value;
+        const url = e.target.getAttribute('action') + '?playlist-name=' + playlistName;
+        ajaxGetJson(url, (responseData) => {
+            closePlaylistNameDialog();
+            alert(responseData.message);
+        });
     }
 })();

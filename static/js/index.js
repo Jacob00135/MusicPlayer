@@ -6,6 +6,7 @@
     mainElement.querySelector('#open-file input[type="file"]').addEventListener('input', showFileAbspathDialog);
     mainElement.querySelector('#file-abspath-dialog .close-btn').addEventListener('click', closeFileAbspathDialog);
     mainElement.querySelector('#file-abspath-dialog form').addEventListener('submit', fileAbspathFormSubmitEvent);
+    document.getElementById('saved-playlist').addEventListener('click', savedPlaylistClickEvent);
 
     function showFileAbspathDialog() {
         document.getElementById('overlay').classList.remove('hidden');
@@ -46,5 +47,28 @@
                 alert(responseData.message);
             }
         })
+    }
+
+    function savedPlaylistClickEvent(e) {
+        const classList = e.target.classList;
+        if (!inArray('delete-btn', classList)
+            && !inArray('delete-icon', classList)
+            && e.target.nodeName.toLowerCase() !== 'path') {
+            return undefined;
+        }
+
+        if (!confirm('是否删除此记录？')) {
+            return undefined;
+        }
+
+        const index = parseInt(e.target.getAttribute('data-index'));
+        const url = mainElement.querySelectorAll('#saved-playlist .playlist')[index].getAttribute('data-delete-url');
+        ajaxGetJson(url, (responseData) => {
+            if (responseData.status === 0) {
+                alert(responseData.message);
+            } else {
+                location.reload();
+            }
+        });
     }
 })();

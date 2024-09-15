@@ -20,14 +20,23 @@ class Config(object):
 
 
 def init_database():
-    """
     # 连接数据库，同时也能在数据库不存在时创建数据库
     con = sqlite3.connect(Config.DATABASE_PATH)
     cursor = con.cursor()
+
+    create_playlist_table_sql = """
+        CREATE TABLE IF NOT EXISTS `playlist`(
+            `playlist_id` INTEGER PRIMARY KEY AUTOINCREMENT,
+            `playlist_name` TEXT UNIQUE NOT NULL,
+            `playlist_content` TEXT NOT NULL
+        );
+    """
+    cursor.execute(create_playlist_table_sql)
+    con.commit()
+
     # 关闭连接
     cursor.close()
     con.close()
-    """
 
 
 def get_db():

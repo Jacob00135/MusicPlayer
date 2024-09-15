@@ -7,10 +7,24 @@
 {% endblock style %}
 
 {% block content %}
+    <div id="overlay" class="hidden"></div>
+    <dialog id="playlist-name-dialog" class="hidden" open>
+        <form action="{{ url_for('main.save_playlist') }}">
+            <h5 class="title">保存当前播放列表</h5>
+            <h6 class="descr">保存当前播放列表，以便下次访问时可以直接载入当前播放列表</h6>
+            <input type="text" name="playlist-name" placeholder="播放列表名称" autocomplete="off" required />
+            <div class="btn-group">
+                <button type="submit">确定</button>
+                <button type="button" class="close-btn">取消</button>
+            </div>
+        </form>
+    </dialog>
+
     <div id="top-nav">
         <a id="index-link" href="{{ url_for('main.index') }}">
             <svg class="icon" xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 24 24"><path fill="#ebeae7" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"/></svg>
         </a>
+        <span class="song-count"></span>
     </div>
 
     <div id="playlist">

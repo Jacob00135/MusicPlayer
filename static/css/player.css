@@ -8,6 +8,94 @@
 }
 /* endregion */
 
+/* region dialog */
+#main #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#main #playlist-name-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+    width: 300px;
+    height: 200px;
+    margin: -100px 0 0 -150px;
+    padding: 0;
+    border-width: 0;
+    border-radius: 4px;
+    box-shadow: 0 0 5px 1px rgba(200, 200, 200, 0.1);
+    background-color: #282c34;
+    outline: none;
+}
+
+#main #playlist-name-dialog form {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    background-color: transparent;
+}
+
+#main #playlist-name-dialog form .title {
+    margin: 0;
+    color: #ebeae7;
+    text-align: center;
+    font-size: 16px;
+}
+
+#main #playlist-name-dialog form .descr {
+    margin: 12px 0 0 0;
+    font-weight: 400;
+    color: #a8a7a5;
+    font-size: 10px;
+}
+
+#main #playlist-name-dialog form input {
+    display: block;
+    width: 200px;
+    height: 32px;
+    margin: 20px auto 0;
+    padding: 0 10px;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: #c8c6c4;
+    line-height: 32px;
+    font-size: 14px;
+    outline: none;
+}
+
+#main #playlist-name-dialog form .btn-group {
+    display: flex;
+    justify-content: space-evenly;
+    margin-top: 20px;
+    text-align: center;
+}
+
+#main #playlist-name-dialog form [type="submit"],
+#main #playlist-name-dialog form .close-btn {
+    margin: 0;
+    padding: 6px 10px;
+    border-width: 0;
+    border-radius: 4px;
+    background-color: #235597;
+    color: #ebeae7;
+    cursor: pointer;
+    outline: none;
+}
+
+#main #playlist-name-dialog form [type="submit"]:hover,
+#main #playlist-name-dialog form .close-btn:hover {
+    background-color: #2861ac;
+}
+/* endregion */
+
 /* region #main #top-nav */
 #main #top-nav {
     box-sizing: border-box;
@@ -25,6 +113,7 @@
 #main #top-nav #index-link {
     display: block;
     position: relative;
+    z-index: 1;
     align-self: center;
     width: 50px;
     height: 50px;
@@ -41,8 +130,21 @@
     position: absolute;
     top: 8px;
     left: 8px;
+    z-index: 2;
     width: 34px;
     height: 34px;
+}
+
+#main #top-nav .song-count {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: #ebeae7;
+    line-height: 60px;
+    text-align: center;
 }
 /* endregion */
 
