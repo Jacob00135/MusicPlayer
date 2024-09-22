@@ -189,6 +189,8 @@
     }
 
     function insertAudioElement(audioElement) {
+        audioElement.addEventListener('play', audioPlayEvent);
+        audioElement.addEventListener('pause', audioPauseEvent);
         audioElement.addEventListener('timeupdate', audioTimeUpdateEvent);
         audioElement.addEventListener('ended', audioEndedEvent);
 
@@ -238,21 +240,25 @@
     }
 
     function playButtonClickEvent(e) {
-        const playBtn = document.getElementById('play-btn');
+        const state = document.getElementById('play-btn').getAttribute('data-state');
         const audioElement = mainElement.querySelector('audio');
-        const playIcon = document.getElementById('icon-play');
-        const pauseIcon = document.getElementById('icon-pause');
-        if (playBtn.getAttribute('data-state') === 'pause') {
+        if (state === 'pause') {
             audioElement.play();
-            playIcon.classList.add('hidden');
-            pauseIcon.classList.remove('hidden');
-            playBtn.setAttribute('data-state', 'play');
-        } else if (playBtn.getAttribute('data-state') === 'play') {
+        } else {
             audioElement.pause();
-            pauseIcon.classList.add('hidden');
-            playIcon.classList.remove('hidden');
-            playBtn.setAttribute('data-state', 'pause');
         }
+    }
+
+    function audioPlayEvent(e) {
+        document.getElementById('icon-play').classList.add('hidden');
+        document.getElementById('icon-pause').classList.remove('hidden');
+        document.getElementById('play-btn').setAttribute('data-state', 'play');
+    }
+
+    function audioPauseEvent(e) {
+        document.getElementById('icon-pause').classList.add('hidden');
+        document.getElementById('icon-play').classList.remove('hidden');
+        document.getElementById('play-btn').setAttribute('data-state', 'pause');
     }
 
     function audioTimeUpdateEvent(e) {
@@ -335,10 +341,9 @@
         const audioElement = generateAudioElement(filepath);
         insertAudioElement(audioElement);
 
-        audioElement.play();
-        document.getElementById('icon-play').classList.add('hidden');
-        document.getElementById('icon-pause').classList.remove('hidden');
-        document.getElementById('play-btn').setAttribute('data-state', 'play');
+        setTimeout(() => {
+            audioElement.play();
+        }, 1000);
 
         const playlistElement = document.getElementById('playlist');
         playlistElement.querySelector('.song.playing').classList.remove('playing');
@@ -376,13 +381,37 @@
     }
 
     function prevSongButtonClickEvent(e) {
+        // 按钮有冷却时间
+        const btn = document.getElementById('prev-song-btn');
+        if (btn.cooling) {
+            return undefined;
+        }
+
+        btn.cooling = true;
+
         const songObject = playlist.getPrevSong();
         switchSong(songObject.filepath, songObject.sourceIndex);
+
+        setTimeout(() => {
+            btn.cooling = false;
+        }, 1000);
     }
 
     function nextSongButtonClickEvent(e) {
+        // 按钮有冷却时间
+        const btn = document.getElementById('next-song-btn');
+        if (btn.cooling) {
+            return undefined;
+        }
+
+        btn.cooling = true;
+
         const songObject = playlist.getNextSong();
         switchSong(songObject.filepath, songObject.sourceIndex);
+
+        setTimeout(() => {
+            btn.cooling = false;
+        }, 1000);
     }
 
     function playlistClickEvent(e) {
